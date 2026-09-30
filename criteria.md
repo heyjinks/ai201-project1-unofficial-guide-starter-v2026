@@ -35,7 +35,7 @@ Every answer the system produces names at least one source document.
 **Why this target:**
 <!-- Why all five and not four? What about your setup makes that achievable —
      or what would have to go wrong for it not to be? -->
-
+     
 ---
 
 ## 3. The relevance gate stops out-of-corpus questions
@@ -57,6 +57,8 @@ in at least 4 of 5 tries.
 
 ## 4. Something about your chunks
 
+
+Chunks should be delimited by the section header noted by the ##.
 <!-- YOU WRITE THIS ONE.
 
      How would you know if your chunks were the right size? Name something
@@ -72,12 +74,15 @@ in at least 4 of 5 tries.
 
 
 **Why this target:**
-
+<!-- The ## delimits a new section with new context. The chunks should be broken up by section.
+     -->
 
 
 ---
 
 ## 5. Your choice
+
+A location should be named in the answer. 
 
 <!-- YOU WRITE THIS ONE TOO.
 
@@ -90,7 +95,7 @@ in at least 4 of 5 tries.
 
 
 **Why this target:**
-
+<!-- The corpus is about city guides, and should be providing a relevant answer about a city-->
 
 
 ---
