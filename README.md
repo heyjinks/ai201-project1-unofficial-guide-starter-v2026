@@ -153,6 +153,8 @@ The five questions I asked had a distance range of 0.231 - 0.486. The out-of-sco
 
 **2.** I asked ChatGPT to explain how to choose a usefulgit remote -v relevance cutoff for retrieval. It explained that I should compare the best distances from questions covered by my corpus with the distances from out-of-scope questions and place the cutoff between the two groups. Rather than using the example cutoff it suggested, I tested my own questions and used the distances produced by my retrieval system to determine the cutoff for my project.
 
+**3.** I used ChatGPT to help me identify where I could improve the RAG system based on the failed 5th criterion. 
+
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
      claims earns nothing.
