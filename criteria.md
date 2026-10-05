@@ -55,21 +55,21 @@ in at least 4 of 5 tries.
 
 ---
 
-## 4. Something about your chunks
+## 4. Chunks should be delimited by the section header noted by the ##.
 
 
-Chunks should be delimited by the section header noted by the ##.
-<!-- YOU WRITE THIS ONE.
+     
+     <!-- YOU WRITE THIS ONE.
 
-     How would you know if your chunks were the right size? Name something
-     countable or observable.
+          How would you know if your chunks were the right size? Name something
+          countable or observable.
 
-     Examples of the right shape — don't copy these, they should come from
-     what you actually saw in Milestone 3:
-       - "At least 4 of 5 sampled chunks read as a complete thought, with no
-          sentence cut in half at either end."
-       - "No chunk is shorter than 200 characters, since anything below that
-          in my corpus turned out to be a heading with no content under it." -->
+          Examples of the right shape — don't copy these, they should come from
+          what you actually saw in Milestone 3:
+          - "At least 4 of 5 sampled chunks read as a complete thought, with no
+               sentence cut in half at either end."
+          - "No chunk is shorter than 200 characters, since anything below that
+               in my corpus turned out to be a heading with no content under it." -->
 
 
 
@@ -80,9 +80,9 @@ Chunks should be delimited by the section header noted by the ##.
 
 ---
 
-## 5. Your choice
+## 5. Explicitly name the location the question is asking about 
 
-A location should be named in the answer. 
+
 
 <!-- YOU WRITE THIS ONE TOO.
 

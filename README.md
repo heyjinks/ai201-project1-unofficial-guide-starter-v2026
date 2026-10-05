@@ -180,15 +180,62 @@ The five questions I asked had a distance range of 0.231 - 0.486. The out-of-sco
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | 5/5 | MET
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | 5/5 | MET
+| 4. Chunks should be delimited by the section header noted by the ##. 5 of 5 | 5/5 | 5/5 | 5/5| met 
+| 5. A location should be named in the answer. 4 of 5 | 4/5 | 4/5 | 4/5 | MET   
 
 <!-- Underneath, paste the REAL output for each criterion from one of your
      runs — the actual text your system produced, not a description of it.
      Name the file and function that produced it. -->
+## 1. Retrieved chunks contain the answer
+app.py::cmd_retrieve
+
+### When is it recommended to go to Pellew Sands for a less crowded beach? — run 3
+
+- Best distance: 0.3920 (passed the gate)
+- Sources retrieved: guide_accessibility.md, guide_elder_ness.md, guide_pellew_sands.md
+
+```
+It is recommended to go in June and September to enjoy the beach without the crowds (guide_pellew_sands.md).
+```
+
+
+## 2. Every answer names a source
+generate.py::answer_from_chunks
+### What ways can one get to Brightwater? — run 1
+
+- Best distance: 0.3944 (passed the gate)
+- Sources retrieved: guide_marchwood.md, guide_pellew_sands.md, guide_regional_transport.md, guide_walking.md
+
+```
+Based on the provided documents, one can get to Brightwater by train from the regional hub (which takes 50 minutes, per `guide_regional_transport.md`) or from Marchwood (trains run every 40 minutes until 11pm, per `guide_marchwood.md`). Additionally, one can drive from Pellew Sands (taking 50 minutes, per `guide_pellew_sands.md`).
+```
+## 3. The relevance gate stops out-of-corpus questions
+run_eval.py::check_out_of_scope
+| What is the recommended dosage of ibuprofen for a headache? | 0.846 | refused |
+
+## 4. Something about your chunks
+chunker.py::split_documents
+======================================================================
+Chunk 1  |  source: guide_accessibility.md#0  |  produced by: chunker.py::split_documents
+======================================================================
+# Getting around the region with limited mobility
+
+An honest assessment rather than a promotional one. Some of these places are
+difficult and it is better to know in advance.
+
+## 5. A location should be named in the answer. 
+generate.py::answer_from_chunks
+
+- Best distance: 0.2306 (passed the gate)
+- Sources retrieved: guide_accessibility.md, guide_brightwater.md, guide_givens_mill.md
+
+```
+Givens Mill is known as a village of 700 people built around a working watermill that still grinds flour commercially. Additionally, most people visit for the tearoom attached to the mill, which sells bread made from the flour ground nearby. (Source: `guide_givens_mill.md`)
+```
+
 
 ## Verdicts
 
@@ -203,13 +250,16 @@ The five questions I asked had a distance range of 0.231 - 0.486. The out-of-sco
 
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunks contain the answer  | MET | The criteria was met for all runs and questions, the retrieved chunks contained the answer
+| 2 | Every answer names a source | MET | Every single answer contained a source for all runs and questions|
+| 3 | The relevance gate stops out-of-corpus questions | MET | Every out-of-corpus question was refused |
+| 4 | Chunks should be delimited by the section header noted by the ##. | MET | The chunks are all correctly delimited |
+| 5 | A location should be named in the answer.  | MET  | A location relevant is named in 4/5 of the questions' runs |
 
 ## Diagnoses
+The only miss was on Criterion 5, which required the answer to explicitly name a location. The question asked, “When is it recommended to go to Pellew Sands for a less crowded beach?” The retrieved chunk was correct and contained the answer, but the generated response said “the beach” instead of repeating “Pellew Sands.” This was therefore a generation-stage issue: the model understood the location from the question and treated it as already established, so it used a pronoun-like reference instead of explicitly naming the place.
+
+
 
 <!-- For each miss: which stage caused it, and how. The stage alone isn't
      enough — you need the mechanism.
@@ -231,9 +281,10 @@ The five questions I asked had a distance range of 0.231 - 0.486. The out-of-sco
 
 ## The Improvement
 
-**What I changed:**
 
-**Why I picked it:**
+**What I changed:** I tightened the grounding instruction in generate.py to require the answer to explicitly name the relevant location rather than referring to it indirectly with phrases such as “the beach,” “there,” or “the area.” I also tightened the wording of the criterion itself.
+
+**Why I picked it:** I chose this change because retrieval was already working correctly and the relevant Pellew Sands chunk was being returned. The failure happened only in how the model phrased the final answer. Requiring the location name in the generated response directly addresses Criterion 5 without changing chunking or retrieval behavior that was already performing well.
 
 <!-- Connect it to a specific diagnosis above in one sentence. If you can't,
      you picked a fix because it sounded impressive. -->
@@ -245,13 +296,15 @@ The five questions I asked had a distance range of 0.231 - 0.486. The out-of-sco
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | 5/5 | MET
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | 5/5 | MET
+| 4. Chunks should be delimited by the section header noted by the ##. 5 of 5 | 5/5 | 5/5 | 5/5| met 
+| 5. Explicitly name the location the question is asking about. 5 of 5 | 5/5 | 5/5 | 5/5 | MET  
 
 **Did it help?**
+
+Yes. After tightening the grounding instruction to require the model to explicitly name the relevant location, Criterion 5 improved because the generated answers named the location instead of referring to it indirectly as “the beach” or “there.” I know the change helped because the after evaluation showed the location-naming criterion passing consistently across the test questions.
 
 <!-- Say plainly whether it did, and how you know. If it made things worse,
      say that — a change that backfired, honestly reported, earns full credit
@@ -259,6 +312,8 @@ The five questions I asked had a distance range of 0.231 - 0.486. The out-of-sco
      tell.
 
      Milestone 4. -->
+
+
 
 ## What's Still Broken
 
@@ -270,9 +325,13 @@ The five questions I asked had a distance range of 0.231 - 0.486. The out-of-sco
 
      Milestone 5. -->
 
+     It did not miss afterwards. 
+
 ## What I'd Do Differently
 
 <!-- Knowing what you know now — which of your five criteria would you write
      differently, and why?
 
      Milestone 5. -->
+
+     I would have tightened the wording to be more strict and specific, as "a location should be named" is vague. A different location irrelevant to the answer could be named and this would have still passed the criterion.
