@@ -27,12 +27,18 @@
 
      Milestone 5. -->
 
+This is a RAG-based system using the city_guides corpus to answer questions about specific destinations, including transportation, food, attractions, and practical travel advice. It retrieves the most relevant section of a city guide based on the user's question and uses that information to generate a grounded answer. If the retrieved information is not relevant enough, the system refuses to answer rather than making up information. Each generated answer also identifies the source documents used.
+
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** Delimited by ## per chunk 
+**Overlap:** None
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
+I chose section-based chunking instead of a fixed character size because the city_guides documents are already organized into clearly labeled sections such as ## Getting there, ## Eat and drink, and ## Practical notes. In the starter version, the 800-character chunker sometimes split directly through these sections and even cut words in half, while other chunks contained several unrelated sections together.
+
+Using each ## section as one chunk keeps the content grouped by topic and gives each chunk enough context to stand on its own. I did not use overlap because the section headings already create natural boundaries, and repeating text from neighboring sections would mix separate topics unnecessarily.
+
+<!-- What about YOUR documents made you pick these numbers? Short posts    and
      long sectioned guides don't want the same chunking, and "800 seemed
      reasonable" earns nothing. Point at something you noticed when you read
      the documents in Milestone 1.
@@ -53,44 +59,71 @@
 
      Milestone 3. -->
 
-**Chunk 1** — source: `` — produced by: ``
+======================================================================
+Chunk 1  |  source: guide_accessibility.md#0  |  produced by: chunker.py::split_documents
+======================================================================
+# Getting around the region with limited mobility
 
-```
-```
+An honest assessment rather than a promotional one. Some of these places are
+difficult and it is better to know in advance.
 
-**Chunk 2** — source: `` — produced by: ``
+======================================================================
+Chunk 2  |  source: guide_corry_vale.md#6  |  produced by: chunker.py::split_documents
+======================================================================
+## When to go
 
-```
-```
+May to September. Outside those months the pub in the third village closes, the farm shop reduces its hours, and several footpaths become genuinely boggy rather than merely wet. The road is not gritted above the second village and is impassable in snow.
 
-**Chunk 3** — source: `` — produced by: ``
+======================================================================
+Chunk 3  |  source: guide_givens_mill.md#3  |  produced by: chunker.py::split_documents
+======================================================================
+## Eat and drink
 
-```
-```
+A tearoom attached to the mill, open 10 to 4 daily except Tuesdays, which sells bread made from the flour ground twenty metres away and is the reason most people come. One pub, food served lunchtimes and Thursday to Saturday evenings.
 
-**Chunk 4** — source: `` — produced by: ``
+======================================================================
+Chunk 4  |  source: guide_kestrelford.md#6  |  produced by: chunker.py::split_documents
+======================================================================
+## When to go
 
-```
-```
+Late spring and early autumn. The Saturday market runs year-round but is much reduced from November to February. August is busy with walkers. The single-track approach road is genuinely difficult in snow and the town can be cut off for a day or two most winters.
 
-**Chunk 5** — source: `` — produced by: ``
+======================================================================
+Chunk 5  |  source: guide_regional_transport.md#1  |  produced by: chunker.py::split_documents
+======================================================================
+## The railway
 
-```
-```
+The line runs along the river valley, connecting Brightwater to the regional
+hub in 50 minutes. Eleven services a day on weekdays, six on Sundays. The line
+north of Brightwater closed in 1963 and everything beyond it is bus or car.
+
+Tickets are cheaper booked the day before than on the day, and considerably
+cheaper than that booked a week ahead. There is no ticket office at
+Brightwater station outside weekday mornings; the machine on the platform takes
+cards only.
 
 ## Sample Answer
 
 <!-- One complete question and answer, pasted as text, with the source line
      visible. Milestone 4. -->
 
-**Question:**
+**Question:** "When is it recommended to go to Pellew Sands for a less crowded beach?"
 
-**Answer:**
+**Answer:** June and September are recommended to visit Pellew Sands for the beach without the crowds (guide_pellew_sands.md).
 
 ```
+python app.py ask "When is it recommended to go to Pellew Sands for a less crowded beach?" --show-prompt
+  (best distance 0.389, cutoff 0.55)
+
+June and September are recommended to visit Pellew Sands for the beach without the crowds (guide_pellew_sands.md).
+
+Sources retrieved: guide_accessibility.md, guide_elder_ness.md, guide_halden_bay.md, guide_pellew_sands.md
+
 ```
 
-**My relevance cutoff:**
+**My relevance cutoff:** .55
+
+The five questions I asked had a distance range of 0.231 - 0.486. The out-of-scope questions I asked ranged from 0.754 - 0.899. I chose .55 because this gives leeway to questions where relevancy may not be as strong based on the answer that had a distance of 0.486.
 
 <!-- The number you set in config.py, and how you got there.
 
@@ -116,9 +149,9 @@
 
      Milestone 5. -->
 
-**1.**
+**1.** I asked Claude to write my chunking function based on my criterion on section delimiting and my notes. It was particularly useful in generating the regex for my function. 
 
-**2.**
+**2.** I asked ChatGPT to explain how to choose a usefulgit remote -v relevance cutoff for retrieval. It explained that I should compare the best distances from questions covered by my corpus with the distances from out-of-scope questions and place the cutoff between the two groups. Rather than using the example cutoff it suggested, I tested my own questions and used the distances produced by my retrieval system to determine the cutoff for my project.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never

@@ -24,7 +24,7 @@ your pipeline, not giving up.
 
 from dataclasses import dataclass
 
-import config
+import config, re
 from ingest import Document
 
 
@@ -71,7 +71,7 @@ def fallback_split(
                         text=piece,
                         source=doc.source,
                         index=index,
-                        produced_by="chunker.py::fallback_split",
+                        produced_by="chunker.py::split_documents",
                     )
                 )
                 index += 1
@@ -81,23 +81,36 @@ def fallback_split(
 
 
 def split_documents(documents: list[Document]) -> list[Chunk]:
-    """
-    Split documents into chunks. ⚠️ REPLACE THE BODY OF THIS IN MILESTONE 3.
+    """Split each document at Markdown ## section headers"""
+    chunks: list[Chunk] = []
 
-    Right now it just calls the fallback. That is the plain, generic behaviour
-    the brief is talking about.
+    for doc in documents:
+        sections = re.split(
+            r"(?=^##(?:\s|$))",
+            doc.text,
+            flags=re.MULTILINE,
+        )
 
-    When you write your own strategy, set `produced_by` to
-    "chunker.py::split_documents" so your README's Sample Chunks section names
-    the right function. `app.py chunks` prints that string for you.
+        index = 0
 
-    Things worth thinking about before you write any code:
-      - Are your documents short posts or long guides?
-      - Is the useful information in one sentence, or spread over a paragraph?
-      - Would splitting on paragraph breaks keep more thoughts intact than
-        splitting on a character count?
-    """
-    return fallback_split(documents)
+        for section in sections:
+            section = section.strip()
+
+            if not section:
+                continue
+
+            chunks.append(
+                Chunk(
+                    text=section,
+                    source=doc.source,
+                    index=index,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+
+            index += 1
+
+    return chunks
 
 
 def describe(chunks: list[Chunk]) -> str:

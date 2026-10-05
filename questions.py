@@ -26,7 +26,7 @@ QUESTIONS = [
     {"question": "When is it recommended to go to Pellew Sands for a less crowded beach?", "expects": "June and September"},
     {"question": "What ways can one get to Brightwater?", "expects": "The train, shuttle, long-distance coaches, airport 90 minutes away"},
     {"question": "Where is there to eat in Kestrelford?", "expects": "Four pubs, two cafes, and a bakery"},
-    {"question": "Where is there to stay in Givens Mill?", "expects": "There is nowhere to stay. People stay in Brightwater and take a day trip to Givens Mill"},
+    {"question": "What is Givens Mill known for?", "expects": "Known for the flour mill"},
     {"question": "What do people go to Elder Ness for?", "expects": "Birds, walking, or nothing"},
 ]
 
